@@ -3,6 +3,7 @@ djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
 drf-yasg
+django-extensions
 gunicorn
 whitenoise
 psycopg2-binary
