@@ -4,6 +4,7 @@ django-cors-headers
 djangorestframework-simplejwt
 drf-yasg
 django-extensions
+GitPython
 gunicorn
 whitenoise
 psycopg2-binary
