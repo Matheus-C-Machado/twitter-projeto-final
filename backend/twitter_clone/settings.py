@@ -6,28 +6,27 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
-# --------------------------------------------------------------
+# ==============================================================
 # 📌 BASE DIR
-# --------------------------------------------------------------
+# ==============================================================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --------------------------------------------------------------
+# ==============================================================
 # 🔐 SECURITY
-# --------------------------------------------------------------
+# ==============================================================
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key")
-DEBUG = int(os.environ.get("DEBUG", 0))  # Em produção sempre 0
+
+DEBUG = False  # PRODUÇÃO SEMPRE FALSE
 
 ALLOWED_HOSTS = [
-    "kaio17.pythonanywhere.com",
-    "twitter-theta-henna.vercel.app",
-    "127.0.0.1",
-    "localhost",
+    "*",  # mais simples e evita erro 400 no Render
 ]
 
-# --------------------------------------------------------------
+# ==============================================================
 # 📦 APPS
-# --------------------------------------------------------------
+# ==============================================================
 INSTALLED_APPS = [
+    # Django
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -42,16 +41,16 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_extensions",
 
-    # Apps do projeto
-    "tweets",
+    # Apps
     "users",
+    "tweets",
 ]
 
-# --------------------------------------------------------------
+# ==============================================================
 # ⚙️ MIDDLEWARE
-# --------------------------------------------------------------
+# ==============================================================
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # TEM QUE SER O PRIMEIRO
+    "corsheaders.middleware.CorsMiddleware",  # PRIMEIRO
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -62,11 +61,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
-# --------------------------------------------------------------
+# ==============================================================
 # 🌐 CORS / CSRF
-# --------------------------------------------------------------
-
+# ==============================================================
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
@@ -96,17 +93,17 @@ CSRF_TRUSTED_ORIGINS = [
     "https://twitter-theta-henna.vercel.app",
 ]
 
-# --------------------------------------------------------------
-# 🔗 ROOT / TEMPLATES / WSGI
-# --------------------------------------------------------------
+# ==============================================================
+# 🔗 URL / TEMPLATES / WSGI
+# ==============================================================
 ROOT_URLCONF = "twitter_clone.urls"
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = "users.User"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "twitter_clone", "templates")],
+        "DIRS": [BASE_DIR / "twitter_clone" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -122,24 +119,28 @@ TEMPLATES = [
 WSGI_APPLICATION = "twitter_clone.wsgi.application"
 
 # ==============================================================
-# 🗄️ BANCO DE DADOS
+# 🗄️ DATABASE
 # ==============================================================
-
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "ENGINE": os.environ.get(
+            "SQL_ENGINE",
+            "django.db.backends.sqlite3"
+        ),
+        "NAME": os.environ.get(
+            "SQL_DATABASE",
+            BASE_DIR / "db.sqlite3"
+        ),
+        "USER": os.environ.get("SQL_USER", ""),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", ""),
+        "HOST": os.environ.get("SQL_HOST", ""),
+        "PORT": os.environ.get("SQL_PORT", ""),
     }
 }
 
 # ==============================================================
-# 🔐 VALIDAÇÃO DE SENHA
+# 🔐 PASSWORD VALIDATORS
 # ==============================================================
-
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -148,39 +149,34 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ==============================================================
-# 🌎 LOCALIZAÇÃO
+# 🌍 I18N
 # ==============================================================
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
 # ==============================================================
-# 📁 ARQUIVOS ESTÁTICOS E MÍDIA
+# 📁 STATIC / MEDIA
 # ==============================================================
-
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# (Opcional) Se quiser servir media no futuro:
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # ==============================================================
 # ⚙️ REST FRAMEWORK / JWT
 # ==============================================================
-
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
+    "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
-    ],
+    ),
 }
 
 SIMPLE_JWT = {
@@ -192,8 +188,8 @@ SIMPLE_JWT = {
 }
 
 # ==============================================================
-# 🧠 OUTRAS CONFIGURAÇÕES
+# 🧠 EXTRAS
 # ==============================================================
-
-INTERNAL_IPS = ["127.0.0.1"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
