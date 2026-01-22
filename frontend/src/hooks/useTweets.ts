@@ -35,5 +35,24 @@ export function useTweets() {
 
     try {
       setLoading(true);
-      const response = await api.get<TweetType[]>("/api/tweets/");
-      setTweets
+
+      // ⚠️ SEM /api aqui
+      const response = await api.get<TweetType[]>("/tweets/");
+      setTweets(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar tweets:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchTweets();
+  }, [fetchTweets]);
+
+  return {
+    tweets,
+    loading,
+    refetchTweets: fetchTweets,
+  };
+}
