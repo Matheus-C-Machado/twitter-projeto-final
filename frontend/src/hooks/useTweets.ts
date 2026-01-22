@@ -1,66 +1,39 @@
-// hooks/useTweets.ts
-import { useState, useEffect, useCallback } from 'react';
-import { useAuth } from './useAuth';
+import { useState, useEffect, useCallback } from "react";
+import api from "../services/api";
+import { useAuth } from "./useAuth";
 
 export interface CommentType {
-    id: number;
-    author_email: string;
-    content: string;
-    created_at: string;
+  id: number;
+  author_email: string;
+  content: string;
+  created_at: string;
 }
 
 export interface TweetType {
-    id: number;
-    username: string;
-    user_id: number;           // <-- agora incluído
-    author_id: number
-    content: string;
-    timestamp: string;
-    likes_count: number;       // <-- corresponde ao JSON
-    replies_count: number;
-    comments: CommentType[];
-    is_following: boolean;
-    handle?: string;
-    liked_by_me: boolean;
-    retweets_count: number;
+  id: number;
+  username: string;
+  user_id: number;
+  author_id: number;
+  content: string;
+  timestamp: string;
+  likes_count: number;
+  replies_count: number;
+  comments: CommentType[];
+  is_following: boolean;
+  handle?: string;
+  liked_by_me: boolean;
+  retweets_count: number;
 }
-
 
 export function useTweets() {
-    const [tweets, setTweets] = useState<TweetType[]>([]);
-    const [reloadKey, setReloadKey] = useState(0); // Força uma atualização
-    const { token } = useAuth();
+  const [tweets, setTweets] = useState<TweetType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
 
-    const fetchTweets = useCallback(async () => {
-        if (!token) {
-            console.warn("Token não encontrado. Não será possível buscar tweets.");
-            return;
-        }
+  const fetchTweets = useCallback(async () => {
+    if (!isAuthenticated) return;
 
-        try {
-            console.log("Iniciando busca por tweets...");
-            const response = await fetch('https://Kaio17.pythonanywhere.com/api/tweets/', {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) throw new Error('Erro ao buscar tweets');
-            const data: TweetType[] = await response.json();
-            console.log("Tweets recebidos:", data);
-            setTweets(data);
-        } catch (error) {
-            console.error("Erro ao buscar tweets:", error);
-        }
-    }, [token]);
-
-    useEffect(() => {
-        fetchTweets();
-    }, [fetchTweets, reloadKey]);
-
-    const reloadTweets = () => {
-        setReloadKey((prev) => prev + 1); // Incrementa para forçar atualização
-    };
-
-    return { tweets, setTweets, fetchTweets, reloadTweets };
-}
+    try {
+      setLoading(true);
+      const response = await api.get<TweetType[]>("/api/tweets/");
+      setTweets
