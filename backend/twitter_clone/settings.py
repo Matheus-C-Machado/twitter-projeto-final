@@ -67,7 +67,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-    "https://twitter-theta-henna.vercel.app",
+    "https://twitter-projeto-final.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -90,7 +90,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://twitter-theta-henna.vercel.app",
+    "https://twitter-projeto-final.vercel.app",
 ]
 
 # ==============================================================
